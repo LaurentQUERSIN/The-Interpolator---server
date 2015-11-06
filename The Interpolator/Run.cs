@@ -42,6 +42,7 @@ namespace Interpolator
         private Task OnConnecting(IScenePeerClient client)
         {
             ConnectionDTO cdto = client.GetUserData<ConnectionDTO>();
+            _log.Debug("interpolator", "new client connecting :: name = " + cdto.name + " :: " + cdto.version);
             if (cdto.version != version)
                 throw new ClientException("Wrong version");
             if (_players.Count > 15)
