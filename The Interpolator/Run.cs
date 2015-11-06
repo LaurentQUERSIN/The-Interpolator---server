@@ -55,7 +55,7 @@ namespace Interpolator
             return Task.FromResult(true);
         }
 
-        private Task OnConnected(IScenePeerClient client)
+        private async Task OnConnected(IScenePeerClient client)
         {
             ConnectionDTO cdto = client.GetUserData<ConnectionDTO>();
 
@@ -64,6 +64,7 @@ namespace Interpolator
                 var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
                 writer.Write(client.Id);
             }, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);
+            await Task.Delay(100);
             client.Send("create_player",w =>
             {
                 var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
@@ -83,16 +84,16 @@ namespace Interpolator
                 writer.Write(cdto.name + " has connected.");
             });
             _players.TryAdd(client.Id, new Player(cdto.name, client.Id));
-            return Task.FromResult(true);
         }
 
         private Task OnDisconnected(DisconnectedArgs args)
         {
+            _log.Debug("interpolator", args.Peer.GetUserData<ConnectionDTO>().name + "has disconnected. reason: " + args.Reason);
             _scene.Broadcast("chat", w =>
             {
                 using (var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false))
                 {
-                    writer.Write(args.Peer.GetUserData<ConnectionDTO>().name + " has disconnected.");
+                    writer.Write(args.Peer.GetUserData<ConnectionDTO>().name + " has disconnected. (" + args.Reason + ")");
                 }
             });
             _scene.Broadcast("remove_player", w =>
