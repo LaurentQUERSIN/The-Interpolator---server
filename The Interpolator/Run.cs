@@ -89,8 +89,15 @@ namespace Interpolator
         {
             _scene.Broadcast("chat", w =>
             {
+                using (var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false))
+                {
+                    writer.Write(args.Peer.GetUserData<ConnectionDTO>().name + " has disconnected.");
+                }
+            });
+            _scene.Broadcast("remove_player", w =>
+            {
                 var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
-                writer.Write(args.Peer.GetUserData<ConnectionDTO>().name + " has disconnected.");
+                writer.Write(args.Peer.Id);
             });
             Player p;
             _players.TryRemove(args.Peer.Id, out p);
@@ -100,7 +107,12 @@ namespace Interpolator
         private void OnChat(Packet<IScenePeerClient> packet)
         {
             string message = packet.ReadObject<string>();
-            _scene.Broadcast("chat", message);
+            Player p;
+            if (_players.TryGetValue(packet.connection.id, out p))
+            {
+                message = p.name + " :" + message;
+                _scene.Broadcast("chat", message);
+            }
         }
 
         private void OnUpdatePosition(Packet<IScenePeerClient> packet)
