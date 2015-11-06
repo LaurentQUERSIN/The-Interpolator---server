@@ -78,24 +78,14 @@ namespace Interpolator
                 var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
                 writer.Write(client.Id);
             });
-            _scene.Broadcast("char", w =>
-            {
-                var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
-                writer.Write(cdto.name + " has connected.");
-            });
+            _scene.Broadcast("char", cdto.name + " has connected.");
             _players.TryAdd(client.Id, new Player(cdto.name, client.Id));
         }
 
         private Task OnDisconnected(DisconnectedArgs args)
         {
             _log.Debug("interpolator", args.Peer.GetUserData<ConnectionDTO>().name + "has disconnected. reason: " + args.Reason);
-            _scene.Broadcast("chat", w =>
-            {
-                using (var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false))
-                {
-                    writer.Write(args.Peer.GetUserData<ConnectionDTO>().name + " has disconnected. (" + args.Reason + ")");
-                }
-            });
+            _scene.Broadcast("chat", args.Peer.GetUserData<ConnectionDTO>().name + " has disconnected. (" + args.Reason + ")");
             _scene.Broadcast("remove_player", w =>
             {
                 var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
