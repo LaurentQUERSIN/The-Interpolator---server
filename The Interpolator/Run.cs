@@ -78,7 +78,7 @@ namespace Interpolator
                 var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
                 writer.Write(client.Id);
             });
-            _scene.Broadcast("char", cdto.name + " has connected.");
+            _scene.Broadcast("chat", cdto.name + " has connected.");
             _players.TryAdd(client.Id, new Player(cdto.name, client.Id));
         }
 
