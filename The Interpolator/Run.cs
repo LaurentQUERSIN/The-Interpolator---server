@@ -85,14 +85,14 @@ namespace Interpolator
         private Task OnDisconnected(DisconnectedArgs args)
         {
             _log.Debug("interpolator", args.Peer.GetUserData<ConnectionDTO>().name + "has disconnected. reason: " + args.Reason);
-            _scene.Broadcast("chat", args.Peer.GetUserData<ConnectionDTO>().name + " has disconnected. (" + args.Reason + ")");
+            Player p;
+            _players.TryRemove(args.Peer.Id, out p);
+            _scene.Broadcast("chat", p.name + " has disconnected. (" + args.Reason + ")");
             _scene.Broadcast("remove_player", w =>
             {
                 var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
                 writer.Write(args.Peer.Id);
             });
-            Player p;
-            _players.TryRemove(args.Peer.Id, out p);
             return Task.FromResult(true);
         }
 
