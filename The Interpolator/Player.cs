@@ -19,6 +19,7 @@ namespace Interpolator
         public float rx = 0;
         public float ry = 0;
         public float rz = 0;
+        public float rw = 0;
 
         public string name;
         public long Id;
@@ -29,7 +30,7 @@ namespace Interpolator
             Id = id;
         }
 
-        public void UpdatePosition(float nx, float ny, float nz, float nvx, float nvy, float nvz, float nrx, float nry, float nrz)
+        public void UpdatePosition(float nx, float ny, float nz, float nvx, float nvy, float nvz, float nrx, float nry, float nrz, float nrw)
         {
             x = nx;
             y = ny;
@@ -42,6 +43,7 @@ namespace Interpolator
             rx = nrx;
             ry = nry;
             rz = nrz;
+            rw = nrw;
         }
     }
 }

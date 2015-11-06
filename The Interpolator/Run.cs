@@ -123,11 +123,12 @@ namespace Interpolator
             var rx = reader.ReadSingle();
             var ry = reader.ReadSingle();
             var rz = reader.ReadSingle();
+            var rw = reader.ReadSingle();
 
             Player p;
             if (_players.TryGetValue(id, out p))
             {
-                p.UpdatePosition(x, y, z, vx, vy, vz, rx, ry, rz);
+                p.UpdatePosition(x, y, z, vx, vy, vz, rx, ry, rz, rw);
             }
         }
 
@@ -177,6 +178,7 @@ namespace Interpolator
                         writer.Write(p.rx);
                         writer.Write(p.ry);
                         writer.Write(p.rz);
+                        writer.Write(p.rw);
                     }
 
                 }, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED);
