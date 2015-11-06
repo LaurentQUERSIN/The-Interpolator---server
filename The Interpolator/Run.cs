@@ -108,7 +108,7 @@ namespace Interpolator
         {
             string message = packet.ReadObject<string>();
             Player p;
-            if (_players.TryGetValue(packet.connection.id, out p))
+            if (_players.TryGetValue(packet.Connection.Id, out p))
             {
                 message = p.name + " :" + message;
                 _scene.Broadcast("chat", message);
