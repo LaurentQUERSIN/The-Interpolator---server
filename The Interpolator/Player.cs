@@ -38,7 +38,7 @@ namespace Interpolator
 
             vx = nvx;
             vy = nvy;
-            nz = nvz;
+            vz = nvz;
 
             rx = nrx;
             ry = nry;
