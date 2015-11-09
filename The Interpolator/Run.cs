@@ -116,10 +116,6 @@ namespace Interpolator
             var y = reader.ReadSingle();
             var z = reader.ReadSingle();
 
-            var vx = reader.ReadSingle();
-            var vy = reader.ReadSingle();
-            var vz = reader.ReadSingle();
-
             var rx = reader.ReadSingle();
             var ry = reader.ReadSingle();
             var rz = reader.ReadSingle();
@@ -128,7 +124,7 @@ namespace Interpolator
             Player p;
             if (_players.TryGetValue(id, out p))
             {
-                p.UpdatePosition(x, y, z, vx, vy, vz, rx, ry, rz, rw);
+                p.UpdatePosition(x, y, z, rx, ry, rz, rw);
             }
         }
 

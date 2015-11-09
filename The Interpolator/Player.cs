@@ -30,15 +30,15 @@ namespace Interpolator
             Id = id;
         }
 
-        public void UpdatePosition(float nx, float ny, float nz, float nvx, float nvy, float nvz, float nrx, float nry, float nrz, float nrw)
+        public void UpdatePosition(float nx, float ny, float nz, float nrx, float nry, float nrz, float nrw)
         {
+            vx = nx - x;
+            vy = ny - y;
+            vz = nz - z;
+
             x = nx;
             y = ny;
             z = nz;
-
-            vx = nvx;
-            vy = nvy;
-            vz = nvz;
 
             rx = nrx;
             ry = nry;
