@@ -23,6 +23,8 @@ namespace Interpolator
 
         public string name;
         public long Id;
+        public long lastUpdate = 0;
+        public long _lastStamp = 0;
 
         public Player (string nm, long id)
         {

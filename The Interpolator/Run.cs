@@ -129,9 +129,10 @@ namespace Interpolator
             var rw = reader.ReadSingle();
 
             Player p;
-            if (stamp > _lastStamp && _players.TryGetValue(id, out p))
+            if (_players.TryGetValue(id, out p) && p != null && stamp > p._lastStamp)
             {
-                _lastStamp = stamp;
+                p._lastStamp = stamp;
+                p.lastUpdate = _env.Clock;
                 p.UpdatePosition(x, y, z, vx, vy, vz, rx, ry, rz, rw);
             }
         }
@@ -170,20 +171,23 @@ namespace Interpolator
 
                     foreach(Player p in _players.Values)
                     {
-                        writer.Write(p.Id);
-                        writer.Write(_env.Clock);
-                        writer.Write(p.x);
-                        writer.Write(p.y);
-                        writer.Write(p.z);
+                        if (p.lastUpdate < _env.Clock - 200)
+                        {
+                            writer.Write(p.Id);
+                            writer.Write(_env.Clock);
+                            writer.Write(p.x);
+                            writer.Write(p.y);
+                            writer.Write(p.z);
 
-                        writer.Write(p.vx);
-                        writer.Write(p.vy);
-                        writer.Write(p.vz);
+                            writer.Write(p.vx);
+                            writer.Write(p.vy);
+                            writer.Write(p.vz);
 
-                        writer.Write(p.rx);
-                        writer.Write(p.ry);
-                        writer.Write(p.rz);
-                        writer.Write(p.rw);
+                            writer.Write(p.rx);
+                            writer.Write(p.ry);
+                            writer.Write(p.rz);
+                            writer.Write(p.rw);
+                        }
                     }
 
                 }, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
