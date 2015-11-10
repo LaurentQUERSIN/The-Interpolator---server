@@ -32,9 +32,9 @@ namespace Interpolator
 
         public void UpdatePosition(float nx, float ny, float nz, float nvx, float nvy, float nvz, float nrx, float nry, float nrz, float nrw)
         {
-            vx = nvx;
-            vy = nvy;
-            vz = nvz;
+            vx = nvx / 1000;
+            vy = nvy / 1000;
+            vz = nvz / 1000;
 
             x = nx;
             y = ny;
