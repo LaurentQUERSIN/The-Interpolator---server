@@ -182,7 +182,7 @@ namespace Interpolator
                     }
 
                 }, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED);
-                await Task.Delay(1000);
+                await Task.Delay(500);
             }
         }
     }
