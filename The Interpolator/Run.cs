@@ -107,11 +107,14 @@ namespace Interpolator
             }
         }
 
+        private long _lastStamp = 0;
+
         private void OnUpdatePosition(Packet<IScenePeerClient> packet)
         {
             var reader = new BinaryReader(packet.Stream);
 
             var id = reader.ReadInt64();
+            var stamp = reader.ReadInt64();
             var x = reader.ReadSingle();
             var y = reader.ReadSingle();
             var z = reader.ReadSingle();
@@ -126,8 +129,9 @@ namespace Interpolator
             var rw = reader.ReadSingle();
 
             Player p;
-            if (_players.TryGetValue(id, out p))
+            if (stamp > _lastStamp && _players.TryGetValue(id, out p))
             {
+                _lastStamp = stamp;
                 p.UpdatePosition(x, y, z, vx, vy, vz, rx, ry, rz, rw);
             }
         }
@@ -167,6 +171,7 @@ namespace Interpolator
                     foreach(Player p in _players.Values)
                     {
                         writer.Write(p.Id);
+                        writer.Write(_env.Clock);
                         writer.Write(p.x);
                         writer.Write(p.y);
                         writer.Write(p.z);
@@ -181,7 +186,7 @@ namespace Interpolator
                         writer.Write(p.rw);
                     }
 
-                }, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED);
+                }, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
                 await Task.Delay(200);
             }
         }
