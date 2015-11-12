@@ -136,11 +136,11 @@ namespace Interpolator
                     p.UpdatePosition(x, y, z, vx, vy, vz, rx, ry, rz, rw);
                     _scene.Broadcast("update_position", w =>
                     {
-                        using (var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false))
+                        using (var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, true))
                         {
 
                             writer.Write(p.Id);
-                            writer.Write(_env.Clock);
+                            writer.Write(p.lastUpdate);
                             writer.Write(p.x);
                             writer.Write(p.y);
                             writer.Write(p.z);
