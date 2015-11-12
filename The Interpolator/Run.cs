@@ -111,29 +111,51 @@ namespace Interpolator
 
         private void OnUpdatePosition(Packet<IScenePeerClient> packet)
         {
-            var reader = new BinaryReader(packet.Stream);
-
-            var id = reader.ReadInt64();
-            var stamp = reader.ReadInt64();
-            var x = reader.ReadSingle();
-            var y = reader.ReadSingle();
-            var z = reader.ReadSingle();
-
-            var vx = reader.ReadSingle();
-            var vy = reader.ReadSingle();
-            var vz = reader.ReadSingle();
-
-            var rx = reader.ReadSingle();
-            var ry = reader.ReadSingle();
-            var rz = reader.ReadSingle();
-            var rw = reader.ReadSingle();
-
-            Player p;
-            if (_players.TryGetValue(id, out p) && p != null && stamp > p._lastStamp)
+            using (var reader = new BinaryReader(packet.Stream))
             {
-                p._lastStamp = stamp;
-                p.lastUpdate = _env.Clock;
-                p.UpdatePosition(x, y, z, vx, vy, vz, rx, ry, rz, rw);
+                var id = reader.ReadInt64();
+                var stamp = reader.ReadInt64();
+                var x = reader.ReadSingle();
+                var y = reader.ReadSingle();
+                var z = reader.ReadSingle();
+
+                var vx = reader.ReadSingle();
+                var vy = reader.ReadSingle();
+                var vz = reader.ReadSingle();
+
+                var rx = reader.ReadSingle();
+                var ry = reader.ReadSingle();
+                var rz = reader.ReadSingle();
+                var rw = reader.ReadSingle();
+
+                Player p;
+                if (_players.TryGetValue(id, out p) && p != null && stamp > p._lastStamp)
+                {
+                    p._lastStamp = stamp;
+                    p.lastUpdate = _env.Clock;
+                    p.UpdatePosition(x, y, z, vx, vy, vz, rx, ry, rz, rw);
+                    _scene.Broadcast("update_position", w =>
+                    {
+                        using (var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false))
+                        {
+
+                            writer.Write(p.Id);
+                            writer.Write(_env.Clock);
+                            writer.Write(p.x);
+                            writer.Write(p.y);
+                            writer.Write(p.z);
+
+                            writer.Write(p.vx);
+                            writer.Write(p.vy);
+                            writer.Write(p.vz);
+
+                            writer.Write(p.rx);
+                            writer.Write(p.ry);
+                            writer.Write(p.rz);
+                            writer.Write(p.rw);
+                        }
+                    }, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
+                }
             }
         }
 
@@ -165,32 +187,32 @@ namespace Interpolator
             _isRunning = true;
             while (_isRunning == true)
             {
-                _scene.Broadcast("update_position", w =>
-                {
-                    var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
+                //_scene.Broadcast("update_position", w =>
+                //{
+                //    var writer = new BinaryWriter(w, System.Text.Encoding.UTF8, false);
 
-                    foreach(Player p in _players.Values)
-                    {
-                        if (p.lastUpdate < _env.Clock - 200)
-                        {
-                            writer.Write(p.Id);
-                            writer.Write(_env.Clock);
-                            writer.Write(p.x);
-                            writer.Write(p.y);
-                            writer.Write(p.z);
+                //    foreach(Player p in _players.Values)
+                //    {
+                //        if (p.lastUpdate < _env.Clock - 200)
+                //        {
+                //            writer.Write(p.Id);
+                //            writer.Write(_env.Clock);
+                //            writer.Write(p.x);
+                //            writer.Write(p.y);
+                //            writer.Write(p.z);
 
-                            writer.Write(p.vx);
-                            writer.Write(p.vy);
-                            writer.Write(p.vz);
+                //            writer.Write(p.vx);
+                //            writer.Write(p.vy);
+                //            writer.Write(p.vz);
 
-                            writer.Write(p.rx);
-                            writer.Write(p.ry);
-                            writer.Write(p.rz);
-                            writer.Write(p.rw);
-                        }
-                    }
+                //            writer.Write(p.rx);
+                //            writer.Write(p.ry);
+                //            writer.Write(p.rz);
+                //            writer.Write(p.rw);
+                //        }
+                //    }
 
-                }, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
+                //}, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
                 await Task.Delay(200);
             }
         }
