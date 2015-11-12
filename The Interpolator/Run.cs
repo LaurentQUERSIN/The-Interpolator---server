@@ -145,9 +145,9 @@ namespace Interpolator
                             writer.Write(p.y);
                             writer.Write(p.z);
 
-                            writer.Write(p.vx);
-                            writer.Write(p.vy);
-                            writer.Write(p.vz);
+                            writer.Write(p.vx / 1000);
+                            writer.Write(p.vy / 1000);
+                            writer.Write(p.vz / 1000);
 
                             writer.Write(p.rx);
                             writer.Write(p.ry);
