@@ -79,6 +79,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ReplicatorObject.cs" />
+    <Compile Include="ReplicatorBehaviour.cs" />
     <Compile Include="ConnectionDTO.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Run.cs" />

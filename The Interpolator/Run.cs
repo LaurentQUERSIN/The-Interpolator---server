@@ -20,6 +20,8 @@ namespace Interpolator
 
         private ConcurrentDictionary<long, Player> _players = new ConcurrentDictionary<long, Player>();
 
+        private ReplicatorBehaviour replicator = new ReplicatorBehaviour();
+
         public void Run(IAppBuilder builder)
         {
             builder.SceneTemplate("interpolator_scene", InterpolatorSceneBuilder);
@@ -35,7 +37,8 @@ namespace Interpolator
             _scene.Disconnected.Add(OnDisconnected);
             _scene.Starting.Add(OnStarting);
             _scene.Shuttingdown.Add(OnSD);
-            _scene.AddRoute("update_position", OnUpdatePosition);
+            replicator.Init(_scene);
+           // _scene.AddRoute("update_position", OnUpdatePosition);
             _scene.AddRoute("chat", OnChat);
         }
 
