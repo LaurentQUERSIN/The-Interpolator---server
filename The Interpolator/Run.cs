@@ -32,14 +32,14 @@ namespace Interpolator
             _scene = scene;
             _log = _scene.GetComponent<ILogger>();
             _env = _scene.GetComponent<IEnvironment>();
-            _scene.Connecting.Add(OnConnecting);
-            _scene.Connected.Add(OnConnected);
-            _scene.Disconnected.Add(OnDisconnected);
-            _scene.Starting.Add(OnStarting);
-            _scene.Shuttingdown.Add(OnSD);
+           // _scene.Connecting.Add(OnConnecting);
+           // _scene.Connected.Add(OnConnected);
+           // _scene.Disconnected.Add(OnDisconnected);
+           // _scene.Starting.Add(OnStarting);
+           // _scene.Shuttingdown.Add(OnSD);
             replicator.Init(_scene);
            // _scene.AddRoute("update_position", OnUpdatePosition);
-            _scene.AddRoute("chat", OnChat);
+           // _scene.AddRoute("chat", OnChat);
         }
 
         private Task OnConnecting(IScenePeerClient client)
