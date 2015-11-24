@@ -34,6 +34,34 @@ namespace Stormancer
             _scene.AddProcedure("RegisterObject", OnRegisterObject);
             _scene.AddRoute("RemoveObject", OnRemoveObject);
             _scene.AddRoute("update_synchedObject", OnUpdateObject);
+            _scene.Connected.Add(OnClientConnected);
+            _scene.Disconnected.Add(OnClientDisconnected);
+        }
+
+        public Task OnClientConnected(IScenePeerClient client)
+        {
+            ReplicatorDTO dto = new ReplicatorDTO();
+            foreach(ReplicatorObject obj in Objects.Values)
+            {
+                dto.Id = obj.Id;
+                dto.PrefabId = obj.PrefabId;
+                client.Send<ReplicatorDTO>("CreateObject", dto);
+            }
+            return Task.FromResult(true);
+        }
+
+        public Task OnClientDisconnected(DisconnectedArgs args)
+        {
+            var dto = new ReplicatorDTO();
+            foreach(ReplicatorObject obj in Objects.Values)
+            {
+                if (args.Peer.Id == obj.Client.Id)
+                {
+                    dto.Id = obj.Id;
+                    _scene.Broadcast<ReplicatorDTO>("DestroyObject", dto);
+                }
+            }
+            return Task.FromResult(true);
         }
 
         public Task OnRegisterObject(RequestContext<IScenePeerClient> ctx)
@@ -75,5 +103,7 @@ namespace Stormancer
         {
             _scene.Broadcast("UpdateObject", packet.Stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
         }
+
+
     }
 }
