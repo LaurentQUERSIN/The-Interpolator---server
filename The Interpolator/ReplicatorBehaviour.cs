@@ -18,6 +18,7 @@ namespace Stormancer
     {
         public uint Id;
         public int PrefabId;
+        public long ClientId;
     }
 
     public class ReplicatorBehaviour
@@ -43,14 +44,29 @@ namespace Stormancer
 
         public Task OnClientConnected(IScenePeerClient client)
         {
-            _log.Debug("replicator", "player connected");
-            ReplicatorDTO dto = new ReplicatorDTO();
-            foreach(ReplicatorObject obj in Objects.Values)
+
+            foreach (IScenePeerClient clt in _scene.RemotePeers)
             {
-                dto.Id = obj.Id;
-                dto.PrefabId = obj.PrefabId;
-                client.Send<ReplicatorDTO>("CreateObject", dto);
+                if (client.Id != clt.Id)
+                {
+                    clt.RpcTask<long, ReplicatorDTO>("RequestObjects", client.Id).ContinueWith(ctx =>
+                    {
+                        if (ctx.IsFaulted == false)
+                        {
+                            client.Send<ReplicatorDTO>("CreateObject", ctx.Result);
+                        }
+                    });
+                }
             }
+
+            _log.Debug("replicator", "player connected");
+            //ReplicatorDTO dto = new ReplicatorDTO();
+            //foreach(ReplicatorObject obj in Objects.Values)
+            //{
+            //    dto.Id = obj.Id;
+            //    dto.PrefabId = obj.PrefabId;
+            //    client.Send<ReplicatorDTO>("CreateObject", dto);
+            //}
             return Task.FromResult(true);
         }
 
@@ -58,16 +74,22 @@ namespace Stormancer
         {
             _log.Debug("replicator", "player disconnected");
             var dto = new ReplicatorDTO();
-            ReplicatorObject trash;
-            foreach(ReplicatorObject obj in Objects.Values)
+
+            dto.ClientId = args.Peer.Id;
+            foreach(IScenePeerClient client in _scene.RemotePeers)
             {
-                if (args.Peer.Id == obj.Client.Id)
-                {
-                    dto.Id = obj.Id;
-                    _scene.Broadcast<ReplicatorDTO>("DestroyObject", dto);
-                    Objects.TryRemove(obj.Id, out trash);
-                }
+                client.Send<ReplicatorDTO>("PlayerDisconnected", dto, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE);
             }
+            //ReplicatorObject trash;
+            //foreach(ReplicatorObject obj in Objects.Values)
+            //{
+            //    if (args.Peer.Id == obj.Client.Id)
+            //    {
+            //        dto.Id = obj.Id;
+            //        _scene.Broadcast<ReplicatorDTO>("DestroyObject", dto);
+            //        Objects.TryRemove(obj.Id, out trash);
+            //    }
+            //}
             return Task.FromResult(true);
         }
 
