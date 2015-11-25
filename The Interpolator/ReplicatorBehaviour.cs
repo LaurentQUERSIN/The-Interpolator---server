@@ -56,14 +56,16 @@ namespace Stormancer
 
         public Task OnClientDisconnected(DisconnectedArgs args)
         {
-            _log.Debug("replicator", "player connected");
+            _log.Debug("replicator", "player disconnected");
             var dto = new ReplicatorDTO();
+            ReplicatorObject trash;
             foreach(ReplicatorObject obj in Objects.Values)
             {
                 if (args.Peer.Id == obj.Client.Id)
                 {
                     dto.Id = obj.Id;
                     _scene.Broadcast<ReplicatorDTO>("DestroyObject", dto);
+                    Objects.TryRemove(obj.Id, out trash);
                 }
             }
             return Task.FromResult(true);
