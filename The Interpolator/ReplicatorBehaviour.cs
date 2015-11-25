@@ -36,7 +36,7 @@ namespace Stormancer
             _log = _scene.GetComponent<ILogger>();
             _scene.AddProcedure("RegisterObject", OnRegisterObject);
             _scene.AddRoute("RemoveObject", OnRemoveObject);
-            _scene.AddRoute("update_synchedObject", OnUpdateObject);
+            _scene.AddRoute("UpdateSynchedObject", OnUpdateObject);
             _scene.Connected.Add(OnClientConnected);
             _scene.Disconnected.Add(OnClientDisconnected);
         }
