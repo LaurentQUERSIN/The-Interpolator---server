@@ -10,6 +10,7 @@ using Stormancer.Plugins;
 using Stormancer.Core;
 using Stormancer.Server;
 using Stormancer.Server.Components;
+using Stormancer.Diagnostics;
 
 namespace Stormancer
 {
@@ -23,6 +24,7 @@ namespace Stormancer
     {
         private ISceneHost _scene;
         private IEnvironment _env;
+        private ILogger _log;
 
         private uint Ids = 0;
         private ConcurrentDictionary<long, ReplicatorObject> Objects = new ConcurrentDictionary<long, ReplicatorObject>();
@@ -31,6 +33,7 @@ namespace Stormancer
         {
             _scene = scene;
             _env = _scene.GetComponent<IEnvironment>();
+            _log = _scene.GetComponent<ILogger>();
             _scene.AddProcedure("RegisterObject", OnRegisterObject);
             _scene.AddRoute("RemoveObject", OnRemoveObject);
             _scene.AddRoute("update_synchedObject", OnUpdateObject);
@@ -40,6 +43,7 @@ namespace Stormancer
 
         public Task OnClientConnected(IScenePeerClient client)
         {
+            _log.Debug("replicator", "player connected");
             ReplicatorDTO dto = new ReplicatorDTO();
             foreach(ReplicatorObject obj in Objects.Values)
             {
@@ -52,6 +56,7 @@ namespace Stormancer
 
         public Task OnClientDisconnected(DisconnectedArgs args)
         {
+            _log.Debug("replicator", "player connected");
             var dto = new ReplicatorDTO();
             foreach(ReplicatorObject obj in Objects.Values)
             {
@@ -66,6 +71,7 @@ namespace Stormancer
 
         public Task OnRegisterObject(RequestContext<IScenePeerClient> ctx)
         {
+            _log.Debug("replicator", "registering object");
             var dto = ctx.ReadObject<ReplicatorDTO>();
             var obj = new ReplicatorObject();
 
@@ -91,6 +97,7 @@ namespace Stormancer
 
         public void OnRemoveObject(Packet<IScenePeerClient> packet)
         {
+            _log.Debug("replicator", "removing object");
             var dto = packet.ReadObject<ReplicatorDTO>();
             ReplicatorObject trash;
 
@@ -103,7 +110,6 @@ namespace Stormancer
         {
             _scene.Broadcast("UpdateObject", packet.Stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
         }
-
-
+        
     }
 }
