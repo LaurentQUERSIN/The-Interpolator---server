@@ -110,7 +110,7 @@ namespace Stormancer
 
         public void OnUpdateObject(Packet<IScenePeerClient> packet)
         {
-            _scene.Broadcast("UpdateObject", packet.Stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
+            _scene.Broadcast("UpdateObject", s => { packet.Stream.CopyTo(s); }, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
         }
         
     }
