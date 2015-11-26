@@ -13,8 +13,12 @@ namespace Interpolator
     {
         public void Run(IAppBuilder builder)
         {
-            InterpolatorScene temp = new InterpolatorScene();
-            builder.SceneTemplate("interpolator_scene", temp.InterpolatorSceneBuilder);
+            builder.SceneTemplate("interpolator_scene", InterpolatorSceneBuilder);
+        }
+
+        public void InterpolatorSceneBuilder(ISceneHost scene)
+        {
+            InterpolatorScene newScene = new InterpolatorScene(scene);
         }
     }
 
@@ -32,9 +36,7 @@ namespace Interpolator
 
         private ReplicatorBehaviour replicator = new ReplicatorBehaviour();
 
-
-
-        public void InterpolatorSceneBuilder(ISceneHost scene)
+        public InterpolatorScene(ISceneHost scene)
         {
             _scene = scene;
             _log = _scene.GetComponent<ILogger>();

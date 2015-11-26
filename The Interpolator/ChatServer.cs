@@ -24,11 +24,11 @@ public static class ChatServerExtensions
 {
     public static void AddChat(this ISceneHost scene)
     {
-        ChatServer.ChatRoomBuilder(scene);
+        ChatServerRun.ChatRoomBuilder(scene);
     }
 }
 
-public class ChatServer
+public class ChatServerRun
 {
     void Run(IAppBuilder builder)
     {
@@ -37,14 +37,27 @@ public class ChatServer
 
      public static void ChatRoomBuilder(ISceneHost scene)
     {
-        scene.AddRoute("chat", p => OnMessageReceived(scene, p));
+        ChatServer cs = new ChatServer(scene);
     }
 
-    static void OnMessageReceived(ISceneHost scene, Packet<IScenePeerClient> packet)
+
+}
+
+public class ChatServer
+{
+    private ISceneHost _scene;
+
+    void OnMessageReceived(Packet<IScenePeerClient> packet)
     {
         var dto = new ChatMessageDTO();
         dto.UserInfo = packet.Connection.GetUserData<ChatUserInfo>();
         dto.Message = packet.ReadObject<string>();
-        scene.Broadcast("chat", dto, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE);
+        _scene.Broadcast("chat", dto, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE);
+    }
+
+    public ChatServer(ISceneHost scene)
+    {
+        _scene = scene;
+        _scene.AddRoute("chat", OnMessageReceived);
     }
 }
