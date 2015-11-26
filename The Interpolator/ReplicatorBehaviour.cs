@@ -46,6 +46,7 @@ namespace Stormancer
             _log.Debug("replicator", "client connected, sending object request to every connected peers");
             foreach (IScenePeerClient clt in _scene.RemotePeers)
             {
+                _log.Debug("replicator", "client requested = " + clt.Id);
                 if (client.Id != clt.Id)
                 {
                     clt.RpcTask<long, List<ReplicatorDTO>>("RequestObjects", client.Id).ContinueWith(ctx =>
