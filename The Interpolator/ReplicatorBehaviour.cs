@@ -43,7 +43,7 @@ namespace Stormancer
 
         public Task OnClientConnected(IScenePeerClient client)
         {
-
+            _log.Debug("replicator", "client connected, sending object request to every connected peers");
             foreach (IScenePeerClient clt in _scene.RemotePeers)
             {
                 if (client.Id != clt.Id)
