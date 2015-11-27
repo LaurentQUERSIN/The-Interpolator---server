@@ -54,7 +54,6 @@ public class ChatServer
             temp.ClientId = packet.Connection.Id;
             temp.User = "";
         }
-        dto.UserInfo.ClientId = packet.Connection.Id;
         dto.UserInfo = temp;
         dto.Message = packet.ReadObject<string>();
         _scene.Broadcast("chat", dto, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE);
