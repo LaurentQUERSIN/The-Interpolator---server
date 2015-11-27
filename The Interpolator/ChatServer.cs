@@ -23,25 +23,17 @@ public struct ChatMessageDTO
 
 public static class ChatServerExtensions
 {
-    public static void AddChat(this ISceneHost scene)
+    public static ChatServer AddChat(this ISceneHost scene)
     {
-        ChatServerRun.ChatRoomBuilder(scene);
+        return new ChatServer(scene);
     }
 }
 
 public class ChatServerRun
 {
-    public static List<ChatServer> scenes = new List<ChatServer>();
-
     void Run(IAppBuilder builder)
     {
-        builder.SceneTemplate("ChatRoom", ChatRoomBuilder);
-    }
-
-     public static void ChatRoomBuilder(ISceneHost scene)
-    {
-        ChatServer cs = new ChatServer(scene);
-        scenes.Add(cs);
+        builder.SceneTemplate("ChatRoom", scene => scene.AddChat());
     }
 }
 
@@ -73,18 +65,10 @@ public class ChatServer
         UsersInfos.TryAdd(packet.Connection.Id, info);
     }
 
-    public Task OnShutDown(ShutdownArgs args)
-    {
-        ChatServerRun.scenes.Remove(this);
-
-        return Task.FromResult(true);
-    }
-
     public ChatServer(ISceneHost scene)
     {
         _scene = scene;
         _scene.AddRoute("UpdateInfo", OnUpdateInfo);
         _scene.AddRoute("chat", OnMessageReceived);
-        _scene.Shuttingdown.Add(OnShutDown);
     }
 }
