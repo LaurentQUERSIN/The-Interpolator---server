@@ -58,6 +58,10 @@ namespace Stormancer
                                 client.Send<ReplicatorDTO>("CreateObject", dto);
                             }
                         }
+                        else
+                        {
+                            _log.Debug("replicator", "object request failed");
+                        }
                     });
                 }
             }
