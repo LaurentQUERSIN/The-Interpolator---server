@@ -60,7 +60,7 @@ namespace Stormancer
                         }
                         else
                         {
-                            _log.Debug("replicator", "object request failed");
+                            _log.Debug("replicator", "object request failed: " + ctx.Exception.Message);
                         }
                     });
                 }
