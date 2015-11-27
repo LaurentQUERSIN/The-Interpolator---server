@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatServer.cs" />
     <Compile Include="ReplicatorObject.cs" />
     <Compile Include="ReplicatorBehaviour.cs" />
     <Compile Include="ConnectionDTO.cs" />
