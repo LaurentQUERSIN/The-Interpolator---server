@@ -23,6 +23,7 @@ namespace Stormancer
 
     public class ReplicatorBehaviour
     {
+
         private ISceneHost _scene;
         private IEnvironment _env;
         private ILogger _log;
