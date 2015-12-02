@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 using Stormancer;
 using Stormancer.Plugins;
@@ -115,7 +116,13 @@ namespace Stormancer
 
         public void OnUpdateObject(Packet<IScenePeerClient> packet)
         {
-            _scene.Broadcast("UpdateObject", s => { packet.Stream.CopyTo(s); }, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE);
+            PacketReliability reliability;
+            using (var reader = new BinaryReader(packet.Stream))
+            {
+                var temp = reader.ReadByte();
+                reliability = (PacketReliability)temp;
+            }
+            _scene.Broadcast("UpdateObject", s => { packet.Stream.CopyTo(s); }, PacketPriority.MEDIUM_PRIORITY, reliability);
         }
     }
 }
