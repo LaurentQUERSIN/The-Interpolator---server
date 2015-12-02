@@ -117,7 +117,7 @@ namespace Stormancer
         public void OnUpdateObject(Packet<IScenePeerClient> packet)
         {
             PacketReliability reliability;
-            using (var reader = new BinaryReader(packet.Stream))
+            using (var reader = new BinaryReader(packet.Stream, Encoding.UTF8))
             {
                 var temp = reader.ReadByte();
                 reliability = (PacketReliability)temp;
