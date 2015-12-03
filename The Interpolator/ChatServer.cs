@@ -90,7 +90,14 @@ public class ChatServer
         }
         info.ClientId = packet.Connection.Id;
         _UsersInfos.TryAdd(packet.Connection.Id, info);
-        _scene.Broadcast<ChatUserInfo>("UpdateInfo", info);
+
+        foreach (IScenePeerClient clt in _scene.RemotePeers)
+        {
+            if (clt.Routes.Select(x => x.Name == "UpdateInfo").Any())
+            {
+                clt.Send<ChatUserInfo>("UpdateInfo", info);
+            }
+        }
     }
 
     Task OnConnected(IScenePeerClient client)
