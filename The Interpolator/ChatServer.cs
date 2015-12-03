@@ -95,7 +95,7 @@ public class ChatServer
         {
             if (clt.Routes.Select(x => x.Name == "UpdateInfo").Any())
             {
-                clt.Send<ChatUserInfo>("UpdateInfo", info);
+                clt.Send<ChatUserInfo>("UpdateInfo", info, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE);
             }
         }
     }
@@ -123,7 +123,13 @@ public class ChatServer
             ChatMessageDTO dto = new ChatMessageDTO();
             dto.UserInfo = temp;
             dto.Message = args.Reason;
-            _scene.Broadcast<ChatMessageDTO>("DiscardInfo", dto, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE);
+            foreach (IScenePeerClient clt in _scene.RemotePeers)
+            {
+                if (clt.Routes.Select(x => x.Name == "DiscardInfo").Any())
+                {
+                    clt.Send<ChatMessageDTO>("DiscardInfo", dto, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE);
+                }
+            };
         }
         return Task.FromResult(true);
     }
