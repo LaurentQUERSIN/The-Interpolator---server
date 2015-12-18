@@ -52,6 +52,10 @@ namespace Stormancer
                 {
                     clt.RpcTask<long, List<ReplicatorDTO>>("RequestObjects", client.Id).ContinueWith(task =>
                     {
+                        if (task.IsCanceled == true)
+                        {
+                            _log.Debug("replicator", "eeror: task cancelled");
+                        }
                         if (task.IsFaulted == false)
                         {
                             var clientDtos = task.Result;
