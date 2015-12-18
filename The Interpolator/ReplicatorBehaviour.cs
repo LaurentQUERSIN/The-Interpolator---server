@@ -55,6 +55,7 @@ namespace Stormancer
                         if (ctx.IsFaulted == false)
                         {
                             var clientdtos = ctx.Result;
+                            _log.Debug("replicator", "Object request received: " + clientdtos.Count);
                             foreach (ReplicatorDTO dto in clientdtos)
                             {
                                 client.Send<ReplicatorDTO>("CreateObject", dto);
