@@ -50,6 +50,7 @@ namespace Stormancer
             {
                 if (client.Id != clt.Id)
                 {
+                    _log.Debug("replicator", "sending request to client " + clt.Id);
                     clt.RpcTask<long, List<ReplicatorDTO>>("RequestObjects", client.Id).ContinueWith(task =>
                     {
                         if (task.IsCanceled == true)
