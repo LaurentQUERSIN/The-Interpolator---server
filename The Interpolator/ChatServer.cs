@@ -33,7 +33,7 @@ public static class ChatServerExtensions
 
 public class ChatServerRun
 {
-    void Run(IAppBuilder builder)
+    public void Run(IAppBuilder builder)
     {
         builder.SceneTemplate("ChatRoom", scene => scene.AddChat());
     }

@@ -50,20 +50,20 @@ namespace Stormancer
             {
                 if (client.Id != clt.Id)
                 {
-                    clt.RpcTask<long, List<ReplicatorDTO>>("RequestObjects", client.Id).ContinueWith(ctx =>
+                    clt.RpcTask<long, List<ReplicatorDTO>>("RequestObjects", client.Id).ContinueWith(task =>
                     {
-                        if (ctx.IsFaulted == false)
+                        if (task.IsFaulted == false)
                         {
-                            var clientdtos = ctx.Result;
-                            _log.Debug("replicator", "Object request received: " + clientdtos.Count);
-                            foreach (ReplicatorDTO dto in clientdtos)
+                            var clientDtos = task.Result;
+                            _log.Debug("replicator", "Object request received: " + clientDtos.Count + " from user " + clt.Id);
+                            foreach (ReplicatorDTO dto in clientDtos)
                             {
                                 client.Send<ReplicatorDTO>("CreateObject", dto);
                             }
                         }
                         else
                         {
-                            _log.Debug("replicator", "object request failed: " + ctx.Exception.InnerException.Message);
+                            _log.Debug("replicator", "object request failed: " + task.Exception.InnerException.Message);
                         }
                     });
                 }
